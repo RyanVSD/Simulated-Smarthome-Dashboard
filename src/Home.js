@@ -109,6 +109,8 @@ export default function Home(props) {
 							) : (
 								<Text>Complete</Text>
 							)
+						) : tokenError ? (
+							"Failed"
 						) : (
 							"Loading"
 						)}
