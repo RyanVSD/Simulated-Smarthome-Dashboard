@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 import { Box, Flex } from "@chakra-ui/react";
 import "./App.css";
 import { authenticate, get } from "./apis.js";
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, Divider } from "@chakra-ui/react";
 import Sidebar from "./Sidebar.js";
 import Home from "./Home.js";
 import Appliances from "./Appliances.js";
@@ -144,8 +144,13 @@ function App() {
 
 	return (
 		<ChakraProvider>
-			<Flex>
-				{renderSidebar}
+			<Flex bg="blackAlpha.100">
+				<Box
+					boxShadow="1px 1px 7px 1px gray "
+					borderRight="1px solid lightgray"
+				>
+					{renderSidebar}
+				</Box>
 				<Box>{renderPage}</Box>
 			</Flex>
 		</ChakraProvider>

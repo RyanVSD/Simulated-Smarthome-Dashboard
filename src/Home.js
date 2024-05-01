@@ -21,7 +21,12 @@ export default function Home(props) {
 	const dataErrorMsg = dataError ? props.data.msg : "";
 	return (
 		<>
-			<Card w="sm" maxH="sm" margin="10px">
+			<Card
+				boxShadow="2px 2px 7px 2px gray"
+				w="sm"
+				maxH="sm"
+				margin="10px"
+			>
 				<CardHeader>
 					<Heading size="lg">Authentication Status</Heading>
 				</CardHeader>
@@ -60,7 +65,12 @@ export default function Home(props) {
 					</Text>
 				</CardFooter>
 			</Card>
-			<Card w="sm" maxH="sm" margin="10px">
+			<Card
+				boxShadow="2px 2px 7px 2px gray"
+				w="sm"
+				maxH="sm"
+				margin="10px"
+			>
 				<CardHeader>
 					<Heading size="lg">Data Status</Heading>
 				</CardHeader>
@@ -105,7 +115,12 @@ export default function Home(props) {
 					</Text>
 				</CardFooter>
 			</Card>
-			<Card w="sm" maxH="sm" margin="10px">
+			<Card
+				boxShadow="2px 2px 7px 2px gray"
+				w="sm"
+				maxH="sm"
+				margin="10px"
+			>
 				<CardHeader>
 					<Heading size="lg">Refresh</Heading>
 				</CardHeader>
