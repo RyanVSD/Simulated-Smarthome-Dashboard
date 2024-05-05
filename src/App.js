@@ -27,7 +27,6 @@ function App() {
 	// Sets the result of authenticate to tokenResponse
 	const getToken = () => {
 		return authenticate().then((response) => {
-			console.log(response);
 			setTimeout(() => {
 				setTokenResponse(response);
 			}, 1000);
@@ -38,7 +37,6 @@ function App() {
 		return () => {
 			if (token !== "") {
 				get(token).then((response) => {
-					console.log(response);
 					setDataResponse(response);
 				});
 			}
