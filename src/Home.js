@@ -1,15 +1,5 @@
-import {
-	Card,
-	CardHeader,
-	CardBody,
-	CardFooter,
-	Divider,
-	Heading,
-	Text,
-	Spinner,
-	Button,
-} from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { Text, Spinner, Button } from "@chakra-ui/react";
+import InfoCard from "./Components/InfoCard";
 export default function Home(props) {
 	const tokenRetrieved = props.tokenResponse?.error != null;
 	const dataRetrieved = props.data?.error != null;
@@ -21,18 +11,10 @@ export default function Home(props) {
 	const dataErrorMsg = dataError ? props.data.msg : "";
 	return (
 		<>
-			<Card
-				boxShadow="2px 2px 7px 2px gray"
-				w="sm"
-				maxH="sm"
-				margin="10px"
-			>
-				<CardHeader>
-					<Heading size="lg">Authentication Status</Heading>
-				</CardHeader>
-				<Divider />
-				<CardBody>
-					{tokenRetrieved ? (
+			<InfoCard
+				header={"Authentication Status"}
+				body={
+					tokenRetrieved ? (
 						tokenError ? (
 							<Text color="red">Error: {tokenErrorMsg}</Text>
 						) : (
@@ -40,43 +22,32 @@ export default function Home(props) {
 						)
 					) : (
 						<Spinner />
-					)}
-				</CardBody>
-				<Divider />
-				<CardFooter>
-					<Text>
-						{tokenRetrieved ? (
-							tokenError ? (
-								<Button
-									variant="outline"
-									colorScheme="messenger"
-									size="sm"
-									borderRadius="0px"
-									onClick={props.retry}
-								>
-									Retry
-								</Button>
-							) : (
-								<Text>Complete</Text>
-							)
+					)
+				}
+				footer={
+					tokenRetrieved ? (
+						tokenError ? (
+							<Button
+								variant="outline"
+								colorScheme="messenger"
+								size="sm"
+								borderRadius="0px"
+								onClick={props.retry}
+							>
+								Retry
+							</Button>
 						) : (
-							"Loading"
-						)}
-					</Text>
-				</CardFooter>
-			</Card>
-			<Card
-				boxShadow="2px 2px 7px 2px gray"
-				w="sm"
-				maxH="sm"
-				margin="10px"
-			>
-				<CardHeader>
-					<Heading size="lg">Data Status</Heading>
-				</CardHeader>
-				<Divider />
-				<CardBody>
-					{tokenRetrieved ? (
+							<Text>Complete</Text>
+						)
+					) : (
+						"Loading"
+					)
+				}
+			/>
+			<InfoCard
+				header="Data Status"
+				body={
+					tokenRetrieved ? (
 						tokenError ? (
 							<Text color="red">Token Error</Text>
 						) : dataRetrieved ? (
@@ -90,45 +61,34 @@ export default function Home(props) {
 						)
 					) : (
 						<Spinner />
-					)}
-				</CardBody>
-				<Divider />
-				<CardFooter>
-					<Text>
-						{dataRetrieved ? (
-							dataError ? (
-								<Button
-									variant="outline"
-									colorScheme="messenger"
-									size="sm"
-									borderRadius="0px"
-									onClick={props.retry}
-								>
-									Retry
-								</Button>
-							) : (
-								<Text>Complete</Text>
-							)
-						) : tokenError ? (
-							"Failed"
+					)
+				}
+				footer={
+					dataRetrieved ? (
+						dataError ? (
+							<Button
+								variant="outline"
+								colorScheme="messenger"
+								size="sm"
+								borderRadius="0px"
+								onClick={props.retry}
+							>
+								Retry
+							</Button>
 						) : (
-							"Loading"
-						)}
-					</Text>
-				</CardFooter>
-			</Card>
-			<Card
-				boxShadow="2px 2px 7px 2px gray"
-				w="sm"
-				maxH="sm"
-				margin="10px"
-			>
-				<CardHeader>
-					<Heading size="lg">Refresh</Heading>
-				</CardHeader>
-				<Divider />
-				<CardBody>Time until next update: {props.countdown}</CardBody>
-			</Card>
+							<Text>Complete</Text>
+						)
+					) : tokenError ? (
+						"Failed"
+					) : (
+						"Loading"
+					)
+				}
+			/>
+			<InfoCard
+				header="Refresh"
+				body={"Time until next update: " + props.countdown}
+			/>
 		</>
 	);
 }

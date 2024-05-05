@@ -22,11 +22,11 @@ const LinkItems = [
 	{ name: "Hazards", icon: GiSurprisedSkull },
 	{ name: "Electricity", icon: GiLightningArc },
 	{ name: "Water", icon: MdOutlineWaterDrop },
-	{ name: "Doors and Windows", icon: LuDoorOpen },
+	{ name: "Sensors", icon: LuDoorOpen },
 ];
 
 export default function Sidebar(props) {
-	const NavItem = ({ icon, children, name }) => {
+	const NavItem = ({ icon, children, name, ind }) => {
 		return (
 			<Button
 				style={{
@@ -35,6 +35,7 @@ export default function Sidebar(props) {
 					height: "fit-content",
 					borderRadius: "0px",
 					background: props.selected === name ? "lightgray" : "",
+					borderBottom: "1px solid gray",
 				}}
 				onClick={() => {
 					props.updMenu(name);
@@ -43,6 +44,7 @@ export default function Sidebar(props) {
 				_hover={{ bg: "Silver !important" }}
 				_focus={{ boxShadow: "none" }}
 				isDisabled={!props.haveData}
+				key={name}
 			>
 				<Flex
 					borderRadius="lg"
@@ -81,17 +83,14 @@ export default function Sidebar(props) {
 			</Flex>
 			<Divider borderColor="gray" />
 			<Flex flexDirection="column">
-				{LinkItems.map((link) => (
-					<>
-						<NavItem
-							key={link.name}
-							name={link.name.toLowerCase()}
-							icon={link.icon}
-						>
-							{link.name}
-						</NavItem>
-						<Divider borderColor={"gray"} />
-					</>
+				{LinkItems.map((link, index) => (
+					<NavItem
+						name={link.name.toLowerCase()}
+						icon={link.icon}
+						key={link.name}
+					>
+						{link.name}
+					</NavItem>
 				))}
 			</Flex>
 		</Box>
