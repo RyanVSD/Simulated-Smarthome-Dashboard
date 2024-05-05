@@ -1,26 +1,21 @@
 import { useEffect, useState, useMemo } from "react";
-import { ReactNode } from "react";
-import { Box, Flex } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import "./App.css";
 import { authenticate, get } from "./apis.js";
-import { ChakraProvider, Divider } from "@chakra-ui/react";
+import { ChakraProvider, SimpleGrid } from "@chakra-ui/react";
 import Sidebar from "./Sidebar.js";
 import Home from "./Home.js";
-import Appliances from "./Appliances.js";
-import Thermostat from "./Thermostat.js";
-import Hazards from "./Hazards.js";
-import Electricity from "./Electricity.js";
-import Water from "./Water.js";
-import DoorsAndWindows from "./DoorsAndWindows.js";
+import DataDisplay from "./DataDisplay.js";
 
 function App() {
 	const [countdown, setCountdown] = useState(10);
-	const [tokenResponse, setTokenResponse] = useState();
+	const [tokenResponse, setTokenResponse] = useState({});
 	const [needToken, setNeedToken] = useState(true);
-	const [dataResponse, setDataResponse] = useState();
-	const [data, setData] = useState();
+	const [dataResponse, setDataResponse] = useState({});
+	const [data, setData] = useState({});
 	const [menu, setMenu] = useState("home");
 
+	// Gets the token from the token response
 	const token = useMemo(() => {
 		if (tokenResponse != null && tokenResponse?.error === false) {
 			return tokenResponse.token;
@@ -29,31 +24,28 @@ function App() {
 		}
 	}, [tokenResponse]);
 
+	// Sets the result of authenticate to tokenResponse
 	const getToken = () => {
 		return authenticate().then((response) => {
 			console.log(response);
 			setTimeout(() => {
 				setTokenResponse(response);
-			}, 100);
+			}, 1000);
 		});
 	};
 
 	const getData = useMemo(() => {
 		return () => {
-			console.log(token);
 			if (token !== "") {
 				get(token).then((response) => {
-					setTimeout(() => {
-						setDataResponse(response);
-					}, 100);
+					console.log(response);
+					setDataResponse(response);
 				});
 			}
 		};
 	}, [token]);
 
 	const refresh = () => {
-		setTokenResponse({});
-		setDataResponse({});
 		setNeedToken(true);
 	};
 
@@ -72,13 +64,6 @@ function App() {
 	});
 
 	useEffect(() => {
-		if (needToken) {
-			getToken();
-			setNeedToken(false);
-		}
-	}, [needToken]);
-
-	useEffect(() => {
 		getData();
 	}, [getData]);
 
@@ -89,26 +74,19 @@ function App() {
 	}, [dataResponse]);
 
 	const haveData = useMemo(() => {
-		return data != null;
+		return Object.keys(data).length > 0;
 	}, [data]);
 
-	const water = useMemo(() => {}, [data]);
-
-	const door = useMemo(() => {}, [data]);
-
-	const window = useMemo(() => {}, [data]);
-
-	const motion = useMemo(() => {}, [data]);
-
-	const thermostat = useMemo(() => {}, [data]);
-
-	const appliance = useMemo(() => {}, [data]);
-
-	const electric = useMemo(() => {}, [data]);
-
-	const safety = useMemo(() => {}, [data]);
-
-	const internet = useMemo(() => {}, [data]);
+	const retrieveGroup = useMemo(() => {
+		return (groupId) => {
+			return Object.keys(data).reduce((acc, key) => {
+				if (data[key].groupId === groupId) {
+					acc[key] = data[key];
+				}
+				return acc;
+			}, {});
+		};
+	}, [data]);
 
 	const renderSidebar = useMemo(() => {
 		return (
@@ -116,20 +94,44 @@ function App() {
 		);
 	}, [haveData, menu, setMenu]);
 
+	useEffect(() => {
+		if (needToken) {
+			if (dataResponse?.error === false) {
+				setTokenResponse({
+					error: false,
+					token: dataResponse.token,
+				});
+			} else {
+				getToken();
+				setTokenResponse({});
+			}
+			setDataResponse({});
+		}
+		setNeedToken(false);
+	}, [needToken, dataResponse]);
+
 	const renderPage = useMemo(() => {
 		switch (menu) {
 			case "appliances":
-				return <Appliances />;
+				return <DataDisplay data={retrieveGroup("appliance")} />;
 			case "thermostat":
-				return <Thermostat />;
+				return <DataDisplay data={retrieveGroup("thermostat")} />;
 			case "hazards":
-				return <Hazards />;
+				return <DataDisplay data={retrieveGroup("safety")} />;
 			case "electricity":
-				return <Electricity />;
+				return <DataDisplay data={retrieveGroup("electric")} />;
 			case "water":
-				return <Water />;
-			case "doorsandwindows":
-				return <DoorsAndWindows />;
+				return <DataDisplay data={retrieveGroup("water")} />;
+			case "sensors":
+				return (
+					<DataDisplay
+						data={{
+							...retrieveGroup("door"),
+							...retrieveGroup("window"),
+							...retrieveGroup("motion"),
+						}}
+					/>
+				);
 			default:
 				return (
 					<Home
@@ -140,19 +142,28 @@ function App() {
 					/>
 				);
 		}
-	}, [menu, countdown, dataResponse, tokenResponse]);
+	}, [menu, countdown, retrieveGroup, dataResponse, tokenResponse]);
 
 	return (
 		<ChakraProvider>
-			<Flex bg="blackAlpha.100">
+			<Box>
 				<Box
 					boxShadow="1px 1px 7px 1px gray "
 					borderRight="1px solid lightgray"
+					position="fixed"
 				>
 					{renderSidebar}
 				</Box>
-				<Box>{renderPage}</Box>
-			</Flex>
+				<SimpleGrid
+					paddingLeft="290.49px"
+					width="100%"
+					height="fit-content"
+					minChildWidth="300px"
+					bg="blackAlpha.100"
+				>
+					{renderPage}
+				</SimpleGrid>
+			</Box>
 		</ChakraProvider>
 	);
 }
